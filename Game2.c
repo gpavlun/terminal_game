@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <termios.h>
+#include <unistd.h>
 #define ROW 30
 #define COL ROW*2
 #define ENCOUNTERS ROW*COL/300
@@ -23,7 +24,7 @@ void movepc(int move);
 void printworld(void);
 void printclose(void);
 void GenerateEncounters(void);
-
+void mainmenu(void);
 
 
 
@@ -46,7 +47,7 @@ void main(void){
     char ch;
     int i,j;
     int move = 0;
-
+    mainmenu();
     InitializeWorld();
     SetWorld();
     world[Y][X] = (char *)(&pc);
@@ -57,10 +58,16 @@ void main(void){
 
 
         system("clear");
-        printf("[===GREG-QUEST===]\n");
-        printf("options:\n");
+        printf("  _____ _____  ______ _____    ____  _    _ ______  _____ _______ \n");
+        printf(" / ____|  __ \\|  ____/ ____|  / __ \\| |  | |  ____|/ ____|__   __|\n");
+        printf("| |  __| |__) | |__ | |  __  | |  | | |  | | |__  | (___    | |   \n");
+        printf("| | |_ |  _  /|  __|| | |_ | | |  | | |  | |  __|  \\___ \\   | |   \n");
+        printf("| |__| | | \\ \\| |___| |__| | | |__| | |__| | |____ ____) |  | |   \n");
+        printf(" \\_____|_|  \\_\\______\\_____|  \\___\\_\\_____/|______|_____/   |_|   \n");
+        printf("\n\t [OPTIONS]\n");
+        printf("\t===========\n");
         for(i=0;i<num_options;i++){
-            printf("%s\n",options[i]);
+            printf("\t%s\n",options[i]);
         }
 
         while((ch = getchar()) != 27) {
@@ -136,6 +143,36 @@ void main(void){
             }
         }
     }
+
+
+}
+void mainmenu(void){
+    system("clear");
+    printf("__        __   _                          \n");
+    printf("\\ \\      / /__| | ___ ___  _ __ ___   ___ \n");
+    printf(" \\ \\ /\\ / / _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\\n");
+    printf("  \\ V  V /  __/ | (_| (_) | | | | | |  __/\n");
+    printf("   \\_/\\_/_\\___|_|\\___\\___/|_| |_| |_|\\___|\n");
+    sleep(1);
+    system("clear");
+    printf("__        __   _                          \n");
+    printf("\\ \\      / /__| | ___ ___  _ __ ___   ___ \n");
+    printf(" \\ \\ /\\ / / _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\\n");
+    printf("  \\ V  V /  __/ | (_| (_) | | | | | |  __/\n");
+    printf("   \\_/\\_/_\\___|_|\\___\\___/|_| |_| |_|\\___|\n");
+    printf("        |_   _|__                         \n");
+    printf("          | |/ _ \\                        \n");
+    printf("          | | (_) |                       \n");
+    printf("          |_|\\___/                        \n");
+    sleep(1);
+    system("clear");
+    printf("  _____ _____  ______ _____    ____  _    _ ______  _____ _______ \n");
+    printf(" / ____|  __ \\|  ____/ ____|  / __ \\| |  | |  ____|/ ____|__   __|\n");
+    printf("| |  __| |__) | |__ | |  __  | |  | | |  | | |__  | (___    | |   \n");
+    printf("| | |_ |  _  /|  __|| | |_ | | |  | | |  | |  __|  \\___ \\   | |   \n");
+    printf("| |__| | | \\ \\| |___| |__| | | |__| | |__| | |____ ____) |  | |   \n");
+    printf(" \\_____|_|  \\_\\______\\_____|  \\___\\_\\_____/|______|_____/   |_|   \n");
+    sleep(1);
 
 
 }
