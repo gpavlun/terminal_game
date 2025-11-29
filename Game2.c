@@ -397,7 +397,7 @@ void GenerateTerrain(struct tile *world, struct terrains *terrains, int ROWS, in
     which is essentially to say it makes the entire
     map a flat walkable area.
     */
-    int i,j,k;
+    int i,j,k,l,m;
     for(i=0;i<ROWS;i++){
         for(j=0;j<COLS;j++){
             world(i,j).deflt = terrains->path;
@@ -613,7 +613,11 @@ void GenerateTerrain(struct tile *world, struct terrains *terrains, int ROWS, in
 
     
 
-    /***start biome generation***/
+    /***start biome assignment***/
+    /*
+    This section will assign a biome to each of the focuses
+    and their vectors. 
+    */
     if(DEVMODE==1){
         printf("\n\nfocus count %d\n",Focuses->focuscount);
     }
@@ -636,15 +640,33 @@ void GenerateTerrain(struct tile *world, struct terrains *terrains, int ROWS, in
         rover = rover->next;
     }
     rover = Focuses->start;
+    /***end biome assignment***/
 
+
+
+    /***start biome generation***/
+    /*
+    This section will create a biome for each vector.
+    It will then draw lines to connect each
+    point in the vector trains together and place the proper
+    terrain element associated with the biome along those lines.
+
+    The lines are calculated by taking the length of the vector
+    trains and dividing one by that length. The fraction created
+    is the step size it will take as it goes from point A to
+    point B and places terrain elements in that region
+    */
     struct vector *tempV;
     int diffx;
     int diffy;
     float iscale = 1/((float)(rover->length));
-    float scale = 1/((float)(rover->length));
+    float scale = iscale;
+    float scale2 = iscale;
     int newx;
     int newy;
-
+    int newx2;
+    int newy2;
+    int width = rover->length;
     for(i=0;i<Focuses->focuscount;i++){
         scale = 1/((float)(rover->length));
         Vector = rover->vector;
@@ -665,6 +687,53 @@ void GenerateTerrain(struct tile *world, struct terrains *terrains, int ROWS, in
             newy = Vector->y + (diffy*scale);
             world(newy,newx).deflt = rover->type;
 
+            
+            //first quadrant loop
+            for(l=0;l<rover->length;l++){
+                scale2 = iscale;
+                for(k=0;k<rover->length;k++){
+                    newx2 = newx + scale2*((.5 * width)*((rover->length-l)/rover->length));
+                    newy2 = newy + scale2*((.5 * width)*(1-((rover->length-l)/rover->length)));
+                    world(newy2,newx2).deflt = rover->type;
+                    scale2 = scale2 + iscale;
+                }
+            }
+            //second quadrant loop
+            for(l=0;l<rover->length;l++){
+                scale2 = iscale;
+                for(k=0;k<rover->length;k++){
+                    newx2 = newx - scale2*((.5 * width)*((rover->length-l)/rover->length));
+                    newy2 = newy + scale2*((.5 * width)*(1-((rover->length-l)/rover->length)));
+                    if(newx2>0&&newx2<COLS&&newy2>0&&newy2<ROWS){
+                        world(newy2,newx2).deflt = rover->type;
+                    }
+                    scale2 = scale2 + iscale;
+                }
+            }
+            //third quadrant loop
+            for(l=0;l<rover->length;l++){
+                scale2 = iscale;
+                for(k=0;k<rover->length;k++){
+                    newx2 = newx - scale2*((.5 * width)*((rover->length-l)/rover->length));
+                    newy2 = newy - scale2*((.5 * width)*(1-((rover->length-l)/rover->length)));
+                    if(newx2>0&&newx2<COLS&&newy2>0&&newy2<ROWS){
+                        world(newy2,newx2).deflt = rover->type;
+                    }
+                    scale2 = scale2 + iscale;
+                }
+            }
+            //fourth quadrant loop
+            for(l=0;l<rover->length;l++){
+                scale2 = iscale;
+                for(k=0;k<rover->length;k++){
+                    newx2 = newx + scale2*((.5 * width)*((rover->length-l)/rover->length));
+                    newy2 = newy - scale2*((.5 * width)*(1-((rover->length-l)/rover->length)));
+                    if(newx2>0&&newx2<COLS&&newy2>0&&newy2<ROWS){
+                        world(newy2,newx2).deflt = rover->type;
+                    }
+                    scale2 = scale2 + iscale;
+                }
+            }                        
             scale = scale + iscale;
         }
         if(DEVMODE==1){
@@ -684,6 +753,57 @@ void GenerateTerrain(struct tile *world, struct terrains *terrains, int ROWS, in
                 newx = Vector->x + (diffx*scale);
                 newy = Vector->y + (diffy*scale);
                 world(newy,newx).deflt = rover->type;
+
+                //first quadrant loop
+                for(l=0;l<rover->length;l++){
+                    scale2 = iscale;
+                    for(m=0;m<rover->length;m++){
+                        newx2 = newx + scale2*((.5 * width)*((rover->length-l)/rover->length));
+                        newy2 = newy + scale2*((.5 * width)*(1-((rover->length-l)/rover->length)));
+                        if(newx2>0&&newx2<COLS&&newy2>0&&newy2<ROWS){
+                            world(newy2,newx2).deflt = rover->type;
+                        }
+                        scale2 = scale2 + iscale;
+                    }
+                }
+                //second quadrant loop
+                for(l=0;l<rover->length;l++){
+                    scale2 = iscale;
+                    for(m=0;m<rover->length;m++){
+                        newx2 = newx - scale2*((.5 * width)*((rover->length-l)/rover->length));
+                        newy2 = newy + scale2*((.5 * width)*(1-((rover->length-l)/rover->length)));
+                        if(newx2>0&&newx2<COLS&&newy2>0&&newy2<ROWS){
+                            world(newy2,newx2).deflt = rover->type;
+                        }
+                        scale2 = scale2 + iscale;
+                    }
+                }
+                //third quadrant loop
+                for(l=0;l<rover->length;l++){
+                    scale2 = iscale;
+                    for(m=0;m<rover->length;m++){
+                        newx2 = newx - scale2*((.5 * width)*((rover->length-l)/rover->length));
+                        newy2 = newy - scale2*((.5 * width)*(1-((rover->length-l)/rover->length)));
+                        if(newx2>0&&newx2<COLS&&newy2>0&&newy2<ROWS){
+                            world(newy2,newx2).deflt = rover->type;
+                        }
+                        scale2 = scale2 + iscale;
+                    }
+                }
+                //fourth quadrant loop
+                for(l=0;l<rover->length;l++){
+                    scale2 = iscale;
+                    for(m=0;m<rover->length;m++){
+                        newx2 = newx + scale2*((.5 * width)*((rover->length-l)/rover->length));
+                        newy2 = newy - scale2*((.5 * width)*(1-((rover->length-l)/rover->length)));
+                        if(newx2>0&&newx2<COLS&&newy2>0&&newy2<ROWS){
+                            world(newy2,newx2).deflt = rover->type;
+                        }
+                        scale2 = scale2 + iscale;
+                    }
+                } 
+
+
 
                 scale = scale + iscale;
             }
@@ -716,6 +836,10 @@ void GenerateTerrain(struct tile *world, struct terrains *terrains, int ROWS, in
 
 
     /***start memory deallocation***/
+    /*
+    This section deallocates all of the memory used
+    in the terrain generation function.
+    */
     struct vector *vrem;
     struct focus *frem;
     rover = Focuses->start;
